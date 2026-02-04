@@ -2,13 +2,14 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from .event import Event
+from .lang.en import DAYS_AFTER_STR, DAYS_BEFORE_STR
 
 data: list[dict[str, str | bool]] = [
-    {"fulldate": "2026-01-01", "event": "New Year's Day"},
-    {"fulldate": "2026-02-03", "event": "Special"},
-    {"fulldate": "2026-07-04", "event": "Independence Day"},
-    {"fulldate": "2026-12-25", "event": "Christmas Day"},
-    {"fulldate": "1998-09-30", "event": "My Birthday", "yearly": True},
+    {"fulldate": "2026-01-01", "title": "New Year's Day"},
+    {"fulldate": "2026-02-03", "title": "Special"},
+    {"fulldate": "2026-07-04", "title": "Independence Day"},
+    {"fulldate": "2026-12-25", "title": "Christmas Day"},
+    {"fulldate": "1998-09-30", "title": "My Birthday", "yearly": True},
 ]
 
 
@@ -17,7 +18,7 @@ def parse_data(events: list[dict[str, Any]]) -> list[Event]:
     enriched_events: list[Event] = []
     for e in events:
         date = datetime.fromisoformat(e["fulldate"]).date()
-        title = e["event"]
+        title = e["title"]
         yearly = e.get("yearly", False)
         if yearly:
             date = date.replace(year=today.year)
@@ -42,9 +43,17 @@ def list_events(events: list[Event]) -> None:
             print(f"    Today is {event.title}!")
         else:
             if event.tdelta.days < 0:
-                print(f"Days after  {event.title:<20}: {-event.tdelta.days:>4}")
+                print(
+                    DAYS_AFTER_STR.format(
+                        title=event.title, days=abs(event.tdelta.days)
+                    )
+                )
             else:
-                print(f"Days before {event.title:<20}: {event.tdelta.days:>4}")
+                print(
+                    DAYS_BEFORE_STR.format(
+                        title=event.title, days=event.tdelta.days
+                    )
+                )
 
 
 def main() -> None:
