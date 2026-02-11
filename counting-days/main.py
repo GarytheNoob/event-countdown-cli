@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from .event import Event
-from .lang.en import DAYS_AFTER_STR, DAYS_BEFORE_STR
+from .lang.en import DAYS_AFTER_STR, DAYS_BEFORE_STR, TODAY_STR
 
 data: list[dict[str, str | bool]] = [
     {"fulldate": "2026-01-01", "title": "New Year's Day"},
@@ -31,6 +31,27 @@ def parse_data(events: list[dict[str, Any]]) -> list[Event]:
     return enriched_events
 
 
+def check_anniversary_since(event: Event) -> int:
+    if event.tdelta.days >= 0 or event.yearly:
+        return -1
+    if (
+        event.date.month == datetime.now().month
+        and event.date.day == datetime.now().day
+    ):
+        years = datetime.now().year - event.date.year
+        return years
+    return -1
+
+
+def check_hundreds_days_since(event: Event) -> int:
+    if event.tdelta.days >= 0 or event.yearly:
+        return -1
+    if event.tdelta.days % 100 == 0:
+        hundreds = abs(event.tdelta.days) // 100
+        return hundreds
+    return -1
+
+
 def list_events(events: list[Event]) -> None:
     events.sort(
         key=lambda e: (
@@ -40,7 +61,7 @@ def list_events(events: list[Event]) -> None:
     )
     for event in events:
         if event.tdelta.days == 0:
-            print(f"    Today is {event.title}!")
+            print(TODAY_STR.format(title=event.title))
         else:
             if event.tdelta.days < 0:
                 print(
