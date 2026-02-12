@@ -4,7 +4,7 @@ from rich.table import Table
 from .event import Event
 
 
-def display_events(events: list[Event]) -> None:
+def list_events(events: list[Event]) -> None:
     console = Console()
     table = Table.grid(pad_edge=True, padding=(0, 2))
 
@@ -41,3 +41,20 @@ def display_events(events: list[Event]) -> None:
             )
 
     console.print(table)
+
+
+def notify_events(events: list[Event]) -> None:
+    console = Console()
+    for event in events:
+        if event.tdelta.days > 0:
+            continue
+        if event.tdelta.days == 0:
+            console.print(f"Today is [i yellow3]{event.title}[/i yellow3]!")
+        elif event.annivarsary > 0:
+            console.print(
+                f"Today is the {event.annivarsary}th anniversary of [i yellow3]{event.title}[/i yellow3]!"
+            )
+        elif abs(event.tdelta.days) % 100 == 0:
+            console.print(
+                f"Today is {abs(event.tdelta.days)} days since [i yellow3]{event.title}[/i yellow3]!"
+            )

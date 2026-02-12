@@ -1,7 +1,7 @@
 import sys
 from datetime import timedelta
 
-from .display_events import display_events
+from .display_events import list_events, notify_events
 from .get_events import read_events_from_file
 
 if __name__ == "__main__":
@@ -18,4 +18,5 @@ if __name__ == "__main__":
         ),
         reverse=True,
     )
-    display_events(events)
+    notify_events(events)
+    list_events(events)
