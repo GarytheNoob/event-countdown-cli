@@ -10,10 +10,12 @@ if __name__ == "__main__":
     else:
         print("Usage: python main.py <events_file>")
         sys.exit(1)
+
     events.sort(
         key=lambda e: (
-            e.tdelta if e.tdelta.days != 0 else timedelta.min,
+            e.tdelta,
             e.title,
-        )
+        ),
+        reverse=True,
     )
     display_events(events)
