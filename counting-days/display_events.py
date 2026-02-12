@@ -1,4 +1,3 @@
-from rich import box
 from rich.console import Console
 from rich.table import Table
 
@@ -7,16 +6,37 @@ from .event import Event
 
 def display_events(events: list[Event]) -> None:
     console = Console()
-    table = Table(box=box.SIMPLE_HEAD)
+    table = Table.grid(pad_edge=True, padding=(0, 2))
 
-    table.add_column("Date", style="white")
-    table.add_column("Title", style="cyan", no_wrap=True)
-    table.add_column(style="magenta", justify="right")
+    # table.add_column()
+    table.add_column(no_wrap=True)
+    table.add_column(justify="right")
+    table.add_column(justify="left")
 
     for event in events:
-        date_str = event.date.strftime("%Y-%m-%d")
+        # date_str = event.date.strftime("%Y-%m-%d")
         title = event.title
         tdelta = event.tdelta.days
-        table.add_row(date_str, title, str(tdelta))
+        if tdelta > 0:
+            table.add_row(
+                # date_str,
+                f"[sky_blue2]{title}",
+                f"[bold sky_blue1]{tdelta} [bold sky_blue2]days",
+                "[bold sky_blue2]left",
+            )
+        elif tdelta < 0:
+            table.add_row(
+                # date_str,
+                f"[orange3]{title}",
+                f"[bold orange1]{-tdelta} [bold orange3]days",
+                "[bold orange3]ago",
+            )
+        else:
+            table.add_row(
+                # date_str,
+                f"[green3]{title}",
+                "[bold green1]0 days",
+                "[bold green3]TODAY",
+            )
 
     console.print(table)
