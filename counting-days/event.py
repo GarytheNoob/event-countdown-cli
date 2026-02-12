@@ -4,8 +4,15 @@ from datetime import date, timedelta
 
 @dataclass
 class Event:
-    # fulldate: str
     date: date
     title: str
     tdelta: timedelta = timedelta(0)
     yearly: bool = False
+
+    def __post_init__(self):
+        today = date.today()
+        if self.yearly:
+            self.date = self.date.replace(year=today.year)
+            if self.date < today:
+                self.date = self.date.replace(year=self.date.year + 1)
+        self.tdelta = self.date - today

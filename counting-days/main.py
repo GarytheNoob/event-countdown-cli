@@ -6,18 +6,6 @@ from .get_events import read_events_from_file
 from .lang.en import *
 
 
-def normalize_events(events: list[Event]) -> list[Event]:
-    for event in events:
-        if event.yearly:
-            event_date = event.date.replace(year=datetime.now().year)
-            if event_date < datetime.now().date():
-                event_date = event_date.replace(year=event_date.year + 1)
-            event.tdelta = event_date - datetime.now().date()
-        else:
-            event.tdelta = event.date - datetime.now().date()
-    return events
-
-
 def check_anniversary_since(event: Event) -> int:
     if event.tdelta.days >= 0 or event.yearly:
         return -1
@@ -61,8 +49,7 @@ def list_events(events: list[Event]) -> None:
 
 def main() -> None:
     events = read_events_from_file("events/test.events")
-    enriched_events = normalize_events(events)
-    list_events(enriched_events)
+    list_events(events)
 
 
 if __name__ == "__main__":
