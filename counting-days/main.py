@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Any
 
 from .event import Event
 from .get_events import read_events_from_file
