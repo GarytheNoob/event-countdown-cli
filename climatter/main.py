@@ -50,7 +50,7 @@ def main():
         ),
         reverse=True,
     )
-    if args.notify_only:
+    if args.notify:
         notify_events(events)
     else:
         list_events(events)
