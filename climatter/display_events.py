@@ -39,30 +39,39 @@ def list_events(events: list[Event]) -> None:
                 "[bold yellow]0",
                 "[yellow]days",
             )
-
     console.print(table)
 
 
 def notify_events(events: list[Event]) -> None:
     console = Console()
-    for event in events:
-        if event.tdelta.days > 0:
-            continue
+    table = Table.grid(pad_edge=True, padding=(0, 2))
+
+    table.add_column(justify="left", no_wrap=True)
+    table.add_column(justify="right", no_wrap=True)
+    table.add_column(justify="right", no_wrap=True)
+
+    events = list(filter(lambda e: e.tdelta.days <= 0, events))
+
+    for i, event in enumerate(events):
+        # if event.tdelta.days > 0:
+        #     continue
+        # content = ""
         if event.tdelta.days == 0:
-            console.print(f"Today is [i yellow3]{event.title}[/i yellow3]!")
+            table.add_row(
+                "Today is",
+                "",
+                f"[i blue b]{event.title}[/i blue b]!",
+            )
         elif event.annivarsary > 0:
-            # XXX: Only for english, but it's good enough for now
-            if 10 <= event.annivarsary % 100 <= 20:
-                ordinal = f"{event.annivarsary}th"
-            else:
-                suffix = {1: "st", 2: "nd", 3: "rd"}.get(
-                    event.annivarsary % 10, "th"
-                )
-                ordinal = f"{event.annivarsary}{suffix}"
-            console.print(
-                f"Today is the {ordinal} anniversary of [i yellow3]{event.title}[/i yellow3]!"
+            table.add_row(
+                "Today is",
+                f"[bold magenta]{event.annivarsary} years[/bold magenta] since",
+                f"[i blue b]{event.title}[/i blue b]!",
             )
         elif abs(event.tdelta.days) % 100 == 0:
-            console.print(
-                f"Today is {abs(event.tdelta.days)} days since [i yellow3]{event.title}[/i yellow3]!"
+            table.add_row(
+                "Today is",
+                f"[bold cyan]{-event.tdelta.days}  days[/bold cyan] since",
+                f"[i blue b]{event.title}[/i blue b]!",
             )
+    console.print(table)
