@@ -1,5 +1,4 @@
 import sys
-from datetime import timedelta
 
 from .display_events import list_events, notify_events
 from .get_events import read_events_from_file
