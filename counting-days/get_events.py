@@ -20,11 +20,11 @@ def read_events_from_file(file_path: str) -> list[Event]:
                 date_parts = date_str.split("-")
                 if len(date_parts) == 3:
                     year, month, day = map(int, date_parts)
-                    event = Event(date=date(year, month, day), title=title)
+                    event = Event(the_date=date(year, month, day), title=title)
                 elif len(date_parts) == 2:
                     month, day = map(int, date_parts)
                     event = Event(
-                        date=date(1, month, day), title=title, yearly=True
+                        the_date=date(1, month, day), title=title, yearly=True
                     )
                 else:
                     raise ValueError("Invalid date format")

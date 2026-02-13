@@ -1,15 +1,34 @@
+import argparse
 import sys
 
 from .display_events import list_events, notify_events
+from .event import Event
 from .get_events import read_events_from_file
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        events = read_events_from_file(sys.argv[1])
-    else:
-        print("Usage: python main.py <events_file>")
-        sys.exit(1)
 
+def load_events_with_args() -> list[Event]:
+    parser = argparse.ArgumentParser(description="Event notifier and lister")
+    parser.add_argument("events_file", help="Path to the events file")
+    parser.add_argument(
+        "--dev-today", type=str, help="Override today's date (YYYY-MM-DD)"
+    )
+    args = parser.parse_args()
+    loaded_events = read_events_from_file(args.events_file)
+    if args.dev_today:
+        from datetime import datetime
+
+        try:
+            dev_today = datetime.strptime(args.dev_today, "%Y-%m-%d").date()
+        except ValueError:
+            print(f"Invalid date format for --dev-today: {args.dev_today}")
+            sys.exit(1)
+        for e in loaded_events:
+            e.checkin(today=dev_today)
+    return loaded_events
+
+
+if __name__ == "__main__":
+    events = load_events_with_args()
     events.sort(
         key=lambda e: (
             e.tdelta,
