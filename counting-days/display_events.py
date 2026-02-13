@@ -51,8 +51,16 @@ def notify_events(events: list[Event]) -> None:
         if event.tdelta.days == 0:
             console.print(f"Today is [i yellow3]{event.title}[/i yellow3]!")
         elif event.annivarsary > 0:
+            # XXX: Only for english, but it's good enough for now
+            if 10 <= event.annivarsary % 100 <= 20:
+                ordinal = f"{event.annivarsary}th"
+            else:
+                suffix = {1: "st", 2: "nd", 3: "rd"}.get(
+                    event.annivarsary % 10, "th"
+                )
+                ordinal = f"{event.annivarsary}{suffix}"
             console.print(
-                f"Today is the {event.annivarsary}th anniversary of [i yellow3]{event.title}[/i yellow3]!"
+                f"Today is the {ordinal} anniversary of [i yellow3]{event.title}[/i yellow3]!"
             )
         elif abs(event.tdelta.days) % 100 == 0:
             console.print(
