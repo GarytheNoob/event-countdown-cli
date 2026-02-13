@@ -17,6 +17,8 @@ def read_events_from_file(file_path: str) -> list[Event]:
     with open(file_path, "r", encoding="utf-8") as file:
         for line in file:
             try:
+                if not line.strip() or line.strip().startswith("#"):
+                    continue
                 date_str, title = line.strip().split(";;", 2)
                 date_parts = date_str.split("-")
                 if len(date_parts) == 3:
