@@ -45,7 +45,7 @@ def list_events(events: list[Event]) -> None:
 
 def filter_events(events: list[Event], option: Option) -> list[Event]:
     if option.list_mode == "all":
-        return events
+        return sorted(events, key=lambda e: e.tdelta, reverse=True)
 
     future_events = list(filter(lambda e: e.tdelta.days > 0, events))
     past_events = list(filter(lambda e: e.tdelta.days < 0, events))
