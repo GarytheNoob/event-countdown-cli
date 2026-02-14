@@ -1,6 +1,7 @@
 from rich.console import Console
 from rich.table import Table
 
+from .config import Option
 from .event import Event
 
 
@@ -40,6 +41,36 @@ def list_events(events: list[Event]) -> None:
                 "[yellow]days",
             )
     console.print(table)
+
+
+def filter_events(events: list[Event], option: Option) -> list[Event]:
+    if option.list_mode == "all":
+        return events
+
+    future_events = list(filter(lambda e: e.tdelta.days > 0, events))
+    past_events = list(filter(lambda e: e.tdelta.days < 0, events))
+    today_events = list(filter(lambda e: e.tdelta.days == 0, events))
+
+    future_events.sort(key=lambda e: e.tdelta)
+    past_events.sort(key=lambda e: e.tdelta, reverse=True)
+
+    ret = []
+
+    if option.list_mode == "nearest":
+        ret = (
+            future_events[: option.list_future_events_count]
+            + today_events
+            + past_events[: option.list_past_events_count]
+        )
+    else:  # "furthest"
+        ret = (
+            future_events[-option.list_future_events_count :]
+            + today_events
+            + past_events[-option.list_past_events_count :]
+        )
+
+    ret.sort(key=lambda e: e.tdelta, reverse=True)
+    return ret
 
 
 def notify_events(events: list[Event]) -> None:

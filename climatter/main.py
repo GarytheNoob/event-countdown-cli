@@ -1,7 +1,8 @@
 import argparse
 import sys
 
-from .display_events import list_events, notify_events
+from .config import read_config
+from .display_events import filter_events, list_events, notify_events
 from .event import Event
 from .get_events import read_events_from_file
 
@@ -41,19 +42,17 @@ def load_events_with_args(args: argparse.Namespace) -> list[Event]:
 
 
 def main():
+    config = read_config()
     args = handle_args()
+
+    # NOTE: events are loaded from args, not config, currently.
+    # TODO: read events from config if no events file is provided in args
     events = load_events_with_args(args)
-    events.sort(
-        key=lambda e: (
-            e.tdelta,
-            e.title,
-        ),
-        reverse=True,
-    )
+    shortlisted_events = filter_events(events, config.option)
     if args.notify:
-        notify_events(events)
+        notify_events(shortlisted_events)
     else:
-        list_events(events)
+        list_events(shortlisted_events)
 
 
 if __name__ == "__main__":
