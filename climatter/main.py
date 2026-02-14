@@ -9,7 +9,10 @@ from .get_events import read_events_from_file
 
 def handle_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Event notifier and lister")
-    # parser.add_argument("events_file", help="Path to the events file")
+    parser.add_argument(
+        "--config",
+        help="Path to config file. If not set, uses priority: user config → default config",
+    )
     parser.add_argument(
         "-n",
         "--notify",

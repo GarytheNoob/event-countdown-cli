@@ -54,7 +54,7 @@ def _find_config_file(user_path: str | None = None) -> Path:
         # Fall through to next priority with warning
         print(
             f"Warning: Specified config file not found: {user_path}, "
-            "falling back..."
+            + "falling back..."
         )
 
     # Priority 2: User config directory
@@ -101,15 +101,16 @@ def _validate_config_data(data: dict[str, Any]) -> None:
 # === Public API ===
 
 
-def read_config(
-    config_path: str | None = None, args: argparse.Namespace | None = None
-) -> Config:
+def read_config(args: argparse.Namespace | None = None) -> Config:
     """
     Reads and parses the config file.
 
     Args:
         config_path: Optional path to a specific config file.
                      If None, uses priority: user config → default config
+
+        args: Optional argparse.Namespace with command-line overrides (e.g.
+        dev_today, notify)
 
     Returns:
         Config object with parsed configuration
@@ -118,11 +119,9 @@ def read_config(
         ValueError: If config validation fails
         yaml.YAMLError: If YAML parsing fails
     """
-    # TODO: use args to override config options if provided (e.g. dev_today,
-    # notify)
 
     # Find which config file to use
-    config_file = _find_config_file(config_path)
+    config_file = _find_config_file(args.config if args else None)
 
     # Load YAML
     try:
