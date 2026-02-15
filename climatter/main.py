@@ -1,5 +1,4 @@
 import argparse
-import sys
 
 from .config import Config, read_config
 from .display_events import filter_events, list_events, notify_events

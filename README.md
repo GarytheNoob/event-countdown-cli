@@ -14,7 +14,7 @@ that helps you remember important dates and events.
       hundred-day since past event, etc).
 
 - [ ] Configure
-  - [ ] Support multiple list files for different categories of events.
+  - [x] Support multiple list files for different categories of events.
 
   - [x] Configurable number of lines displayed when listing.
 

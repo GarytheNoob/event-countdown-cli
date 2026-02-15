@@ -78,6 +78,9 @@ def _validate_config_data(data: dict[str, Any]) -> None:
     if "event_lists" not in data:
         raise ValueError("Config missing required 'event_lists' section")
 
+    if not isinstance(data["options"], dict):
+        raise ValueError("'options' must be a dictionary")
+
     options = data["options"]
 
     # Validate list_mode
@@ -97,6 +100,15 @@ def _validate_config_data(data: dict[str, Any]) -> None:
             "'event_lists' must be a dictionary mapping names to paths"
         )
 
+    event_lists = data["event_lists"]
+    for name, path in event_lists.items():
+        if not isinstance(name, str):
+            raise ValueError(f"Event list name must be a string: {name}")
+        if not isinstance(path, str):
+            raise ValueError(
+                f"Event list path must be a string for '{name}': {path}"
+            )
+
 
 # === Public API ===
 
@@ -106,12 +118,15 @@ def read_config(args: argparse.Namespace | None = None) -> Config:
     Reads and parses the config file.
 
     Args:
-        config_path: Optional path to a specific config file.
-                     If None, uses priority: user config → default config
-
-        args: Optional argparse.Namespace with command-line overrides (e.g.
-        dev_today, notify)
-
+        args: Optional argparse.Namespace containing command-line options.
+            Relevant attributes include:
+            - config: Optional path to a specific config file. If not set,
+              the default search priority is applied (user config → default
+              config).
+            - dev_today: Optional override for today's date in ISO format
+              (YYYY-MM-DD), used for development/testing.
+            - notify: Optional notification flag/setting applied to the
+              returned Config object.
     Returns:
         Config object with parsed configuration
 
@@ -131,6 +146,12 @@ def read_config(args: argparse.Namespace | None = None) -> Config:
         raise yaml.YAMLError(
             f"Failed to parse config file {config_file}: {e}"
         ) from e
+    if data is None:
+        raise ValueError(f"Config file {config_file} is empty or invalid")
+    if not isinstance(data, dict):
+        raise ValueError(
+            f"Config file {config_file} must contain a YAML dictionary at the top level"
+        )
 
     # Validate structure
     _validate_config_data(data)
